@@ -15,7 +15,7 @@ Animate all 64 hardware sprites.
 
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] = { 
-  0x03,			// screen color
+  0xF,			// screen color
 
   0x11,0x30,0x27,0x0,	// background palette 0
   0x1c,0x20,0x2c,0x0,	// background palette 1
@@ -97,9 +97,6 @@ signed char cos(unsigned char angle)
 static sbyte x, y;
 static byte  ox, oy, a, len;
 
-
-static byte j = 1;
-
 long f;
 
 // main program
@@ -133,16 +130,16 @@ void main() {
    
     // start with OAMid/sprite 0
     oam_id = 0;
-    oam_id = oam_spr(ox, oy, 0xAE, i, oam_id);
+    //oam_id = oam_spr(ox, oy, 0xAE, i, oam_id);
     
-    for (i = 1; i < 17; ++i) {
-      if (i % 2 == 0) ++j;
-      x = (cos(a * (i / 1)) * (len - (i * 4)) ) / 128;
-      y = (sin(a * (i / 1)) * (len - (i * 4)) ) / 128;
-      oam_id = oam_spr(ox + x, oy + y, 0xAF, i, oam_id);
+    for (i = 1; i < 25; ++i) {      
+      x = (cos(4*a-i*8) * (16 + (i * 4)) ) / 128;
+      y = (sin(0*a+i*2) * (16 + (i * 4)) ) / 128;
+      oam_id = oam_spr(ox + x, 50 + y, 0xAF, 0, oam_id);
     }   
     ++a;
-    //if (++f % 2) a+= 1;
+    //a = 50;
+    //if (++f % 2 == 0) a+= 1;
     
     /*
     // draw and move all actors
