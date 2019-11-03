@@ -94,7 +94,13 @@ signed char cos(unsigned char angle)
   return sin(angle+64);
 }
 
-static byte x, y, ox, oy, a, len;
+static sbyte x, y;
+static byte  ox, oy, a, len;
+
+
+static byte j = 1;
+
+long f;
 
 // main program
 void main() {
@@ -104,7 +110,7 @@ void main() {
   ox = 124;
   oy = 112;
   
-  len = 80;
+  len = 100;
   
   // initialize actors with random values
   for (i=0; i<NUM_ACTORS; i++) {
@@ -127,20 +133,16 @@ void main() {
    
     // start with OAMid/sprite 0
     oam_id = 0;
-    oam_id = oam_spr(ox, oy, 0xAF, i, oam_id);
+    oam_id = oam_spr(ox, oy, 0xAE, i, oam_id);
     
-    x = (cos(a) * len) / 128;
-    y = (sin(a) * len) / 128;
-    oam_id = oam_spr(ox + x, oy + y, 0xAF, i, oam_id);
-
-    x = (cos(a * 2) * (len + 30)) / 128;
-    y = (sin(a * 2) * (len + 30)) / 128;    
-    oam_id = oam_spr(ox + x, oy + y, 0xAF, i, oam_id);
-    
-       
-    a += 1;
-    
-    
+    for (i = 1; i < 17; ++i) {
+      if (i % 2 == 0) ++j;
+      x = (cos(a * (i / 1)) * (len - (i * 4)) ) / 128;
+      y = (sin(a * (i / 1)) * (len - (i * 4)) ) / 128;
+      oam_id = oam_spr(ox + x, oy + y, 0xAF, i, oam_id);
+    }   
+    ++a;
+    //if (++f % 2) a+= 1;
     
     /*
     // draw and move all actors
