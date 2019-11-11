@@ -99,6 +99,10 @@ static byte  ox, oy, a, len;
 
 long f;
 
+byte pad;
+
+static sbyte cam_x, cam_y;
+
 // main program
 void main() {
   char i;	// actor index
@@ -119,7 +123,7 @@ void main() {
   
   // write text to name table
   vram_adr(NTADR_A(12,10));		// set address
-  vram_write("BANANAS!!!", 10);	// write bytes to video RAM  
+  //vram_write("BANANAS!!!", 10);	// write bytes to video RAM  
   
   // initialize PPU
   setup_graphics(); 
@@ -135,14 +139,22 @@ void main() {
     oam_id = 0;
     //oam_id = oam_spr(ox, oy, 0xAE, i, oam_id);
     
-    for (i = 1; i < 25; ++i) {      
-      x = (cos(4*a-i*8) * (16 + (i * 4)) ) / 128;
-      y = (sin(0*a+i*2) * (16 + (i * 4)) ) / 128;      
-      oam_id = oam_spr(ox + x, 50 + y, 0xAF, 0 | OAM_BEHIND, oam_id);
+    for (i = 10; i != 0; --i) {      
+      x = (cos(8*a - i*16) * (0 + (i * 4)) ) / 128;
+      y = (sin(i*2      ) * (32 + (i * cam_y / 2)) ) / 128;      
+      oam_id = oam_spr(ox + x - cam_x, oy + y - cam_y, 0xAF, 0 | OAM_BEHIND, oam_id);
     }   
     ++a;
     //a = 50;
     //if (++f % 2 == 0) a+= 1;
+    
+    pad = pad_poll(0);
+    if (pad & PAD_LEFT) ++cam_x; 
+    else if (pad & PAD_RIGHT) --cam_x;
+    
+    if (pad & PAD_UP) --cam_y; 
+    else if (pad & PAD_DOWN) ++cam_y;
+    
     
     /*
     // draw and move all actors
@@ -156,7 +168,7 @@ void main() {
     // if we haven't wrapped oam_id around to 0
     if (oam_id!=0) oam_hide_rest(oam_id);
     
-    pal_spr_bright(2 + (nesclock() / 2) % 4);
+    //pal_spr_bright(2 + (nesclock() / 2) % 4);
     
     // wait for next frame
     ppu_wait_nmi();    
